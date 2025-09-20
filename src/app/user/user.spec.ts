@@ -9,7 +9,8 @@ describe('User', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [User]
+      imports: [User],
+      providers: [UserService]
     })
     .compileComponents();
 
