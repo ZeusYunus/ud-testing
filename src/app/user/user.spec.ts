@@ -36,4 +36,22 @@ describe('User', () => {
     fixture.detectChanges();
     expect(userService.user.name).toEqual(app.user.name);
   });
+
+  it('should display username if user is logged in', () => {
+    const fixture = TestBed.createComponent(User);
+    const app = fixture.componentInstance;
+    app.isLoggedIn = true;
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('p')?.textContent).toContain(app.user.name);
+  });
+
+  it('shouldn\'t display username if user is not logged in', () => {
+    const fixture = TestBed.createComponent(User);
+    const app = fixture.componentInstance;
+    app.isLoggedIn = false;
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('p')?.textContent).not.toContain(app.user.name);
+  });
 });
