@@ -1,23 +1,24 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { User } from './user';
 import { UserService } from './user.service';
+import { DataService } from '../shared/data.service';
 
 describe('User', () => {
   let component: User;
   let fixture: ComponentFixture<User>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       imports: [User],
-      providers: [UserService]
+      providers: [UserService, DataService]
     })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(User);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    .compileComponents().then(() => {
+      fixture = TestBed.createComponent(User);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+    });
+  }));
 
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -54,4 +55,22 @@ describe('User', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('p')?.textContent).not.toContain(app.user.name);
   });
+
+  it('shouldn\'t fetch data successfully if not called asynchronously', () => {
+    const fixture = TestBed.createComponent(User);
+    const app = fixture.componentInstance;
+    const dataService = fixture.debugElement.injector.get(DataService);
+    const spy = spyOn(dataService, 'getDetails').and.returnValue(Promise.resolve('Data'));
+    fixture.detectChanges();
+    expect(app.data).toBe(undefined);
+  });
+
+  it('should fetch data successfully if called asynchronously', waitForAsync(() => {
+    const fixture = TestBed.createComponent(User);
+    const app = fixture.componentInstance;
+    const dataService = fixture.debugElement.injector.get(DataService);
+    const spy = spyOn(dataService, 'getDetails').and.returnValue(Promise.resolve('Data'));
+    fixture.detectChanges();
+    expect(app.data).toBe(undefined);
+  }));
 });
